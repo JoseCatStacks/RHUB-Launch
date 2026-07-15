@@ -1,0 +1,1719 @@
+echo "# RHUB-Launch" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/JoseCatStacks/RHUB-Launch.git
+git push -u origin main
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RHub • Powered by Robinhood Blockchain</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Suppress Tailwind Play CDN production warning (this is a rapid prototype/demo)
+        (function() {
+            const originalWarn = console.warn;
+            console.warn = function(...args) {
+                if (args[0] && typeof args[0] === 'string' && args[0].includes('cdn.tailwindcss.com')) {
+                    return;
+                }
+                originalWarn.apply(console, args);
+            };
+        })();
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
+        
+        :root {
+            --primary: #00C805;
+        }
+        
+        body {
+            font-family: 'Inter', system_ui, sans-serif;
+        }
+        
+        .font-display {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-weight: 600;
+        }
+
+        .crypto-gradient {
+            background: linear-gradient(135deg, #0A0A0A 0%, #111111 100%);
+        }
+
+        .neon-green {
+            color: #00C805;
+            text-shadow: 0 0 10px rgba(0, 200, 5, 0.3);
+        }
+
+        .section-header {
+            font-size: 2.25rem;
+            line-height: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+
+        .glass {
+            background: rgba(255,255,255, 0.04);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255, 0.08);
+        }
+
+        .crypto-card {
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
+                       box-shadow 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+        
+        .crypto-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        .nav-link {
+            transition: color 0.1s ease;
+        }
+        
+        .nav-link:hover {
+            color: #00C805;
+        }
+
+        .metric-value {
+            font-variant-numeric: tabular-nums;
+        }
+
+        .modal {
+            animation: modalPop 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes modalPop {
+            0% {
+                transform: scale(0.8) translateY(40px);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .token-logo {
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border-radius: 9999px;
+        }
+
+        .launch-progress {
+            height: 6px;
+            background: linear-gradient(to right, #00C805, #22c55e);
+            transition: width 0.4s ease;
+        }
+
+        .stat-number {
+            font-variant-numeric: tabular-nums;
+        }
+
+        .robinhood-green {
+            color: #00C805;
+        }
+
+        .dark-bg {
+            background-color: #0A0A0A;
+        }
+
+        .subtle-grid {
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+    </style>
+</head>
+<body class="bg-[#0A0A0A] text-white dark-bg">
+    <!-- NAVBAR -->
+    <nav class="sticky top-0 z-50 border-b border-white/10 bg-[#0A0A0A]/95 backdrop-blur-xl">
+        <div class="max-w-screen-2xl mx-auto">
+            <div class="px-8 py-5 flex items-center justify-between">
+                <!-- Logo -->
+                <div class="flex items-center gap-x-3">
+                    <div class="w-10 h-10 rounded-2xl bg-[#00C805] flex items-center justify-center">
+                        <i class="fa-solid fa-rocket text-black text-3xl"></i>
+                    </div>
+                    <div class="leading-none">
+                        <div class="font-display text-2xl font-semibold tracking-tighter">RHub</div>
+                        <div class="text-[10px] font-medium tracking-[2px] text-white/50 -mt-0.5">POWERED BY ROBINHOOD BLOCKCHAIN</div>
+                    </div>
+                </div>
+
+                <!-- Desktop Nav -->
+                <div class="hidden md:flex items-center gap-x-8 text-sm font-medium">
+                    <a href="#launchpad" class="nav-link px-3 py-2 text-white/80 hover:text-white">Launchpad</a>
+                    <a href="#staking" class="nav-link px-3 py-2 text-white/80 hover:text-white">Staking</a>
+                    <a href="#trade" class="nav-link px-3 py-2 text-white/80 hover:text-white">Trade</a>
+                    <a href="#token" class="nav-link px-3 py-2 text-white/80 hover:text-white">$RHUB</a>
+                    <a href="#portfolio" class="nav-link px-3 py-2 text-white/80 hover:text-white">Portfolio</a>
+                </div>
+
+                <!-- Wallet + Mobile -->
+                <div class="flex items-center gap-x-3">
+                    <!-- Wallet Button -->
+                    <button onclick="toggleWallet()"
+                            class="flex items-center gap-x-2.5 px-5 py-2.5 rounded-3xl text-sm font-semibold transition-all active:scale-[0.985]"
+                            id="wallet-btn">
+                        <div class="flex items-center gap-x-2">
+                            <i class="fa-solid fa-wallet"></i>
+                            <span id="wallet-text">Connect Wallet</span>
+                        </div>
+                    </button>
+
+                    <!-- Mobile Menu -->
+                    <button class="md:hidden w-11 h-11 flex items-center justify-center rounded-2xl border border-white/10" onclick="toggleMobileMenu()">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <div class="max-w-screen-2xl mx-auto px-8 pt-16 pb-20">
+        <div class="max-w-4xl">
+            <div class="inline-flex items-center gap-x-2 px-4 py-1.5 rounded-3xl bg-white/5 border border-white/10 mb-6">
+                <div class="w-2 h-2 bg-[#00C805] rounded-full animate-pulse"></div>
+                <span class="text-sm font-medium text-white/80">Now live on Robinhood Blockchain • Ultra-low fees</span>
+            </div>
+
+            <h1 class="font-display text-7xl md:text-7xl font-semibold tracking-tighter leading-none mb-4">
+                The future hub<br>of crypto.
+            </h1>
+            <p class="max-w-lg text-2xl text-white/70 font-light tracking-tight mb-10">
+                Launch tokens. Stake for yield.<br>
+                Trade instantly. All powered by <span class="text-[#00C805] font-semibold">$RHUB</span>.
+            </p>
+
+            <div class="flex flex-wrap gap-4">
+                <button onclick="document.getElementById('launchpad').scrollIntoView({ behavior: 'smooth' })" 
+                        class="px-8 py-4 rounded-3xl bg-[#00C805] hover:bg-[#00b004] transition-all text-black font-semibold text-lg flex items-center gap-x-3 active:scale-[0.985]">
+                    <span>Explore Launchpad</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+                
+                <button onclick="document.getElementById('token').scrollIntoView({ behavior: 'smooth' })" 
+                        class="px-8 py-4 rounded-3xl border border-white/20 hover:bg-white/5 transition-all font-semibold text-lg flex items-center gap-x-3">
+                    <span>Buy $RHUB</span>
+                </button>
+            </div>
+
+            <div class="mt-8 flex items-center gap-x-8 text-sm">
+                <div class="flex -space-x-2">
+                    <div class="w-8 h-8 rounded-full bg-zinc-700 border border-white/20 overflow-hidden"><img src="https://picsum.photos/id/1005/32/32" class="object-cover"></div>
+                    <div class="w-8 h-8 rounded-full bg-zinc-700 border border-white/20 overflow-hidden"><img src="https://picsum.photos/id/1011/32/32" class="object-cover"></div>
+                    <div class="w-8 h-8 rounded-full bg-zinc-700 border border-white/20 overflow-hidden"><img src="https://picsum.photos/id/201/32/32" class="object-cover"></div>
+                </div>
+                <div class="text-white/60 text-sm">
+                    <span class="font-semibold text-white">184,291</span> traders online
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- STATS BAR -->
+    <div class="border-y border-white/10 bg-black/40">
+        <div class="max-w-screen-2xl mx-auto px-8 py-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="text-white/50 text-xs tracking-[1px] font-medium mb-1">TOTAL VALUE LOCKED</div>
+                    <div class="text-4xl font-semibold tabular-nums stat-number" id="tvl">2.84</div>
+                    <div class="text-emerald-400 text-sm font-medium">BILLION USD</div>
+                </div>
+                <div>
+                    <div class="text-white/50 text-xs tracking-[1px] font-medium mb-1">ACTIVE USERS</div>
+                    <div class="text-4xl font-semibold tabular-nums stat-number" id="users">184.3k</div>
+                    <div class="text-emerald-400 text-sm font-medium">+12.4k this week</div>
+                </div>
+                <div>
+                    <div class="text-white/50 text-xs tracking-[1px] font-medium mb-1">TOKENS LAUNCHED</div>
+                    <div class="text-4xl font-semibold tabular-nums stat-number" id="launches">127</div>
+                    <div class="text-emerald-400 text-sm font-medium">18 live today</div>
+                </div>
+                <div>
+                    <div class="text-white/50 text-xs tracking-[1px] font-medium mb-1">$RHUB STAKED</div>
+                    <div class="text-4xl font-semibold tabular-nums stat-number" id="rhub-staked">48.7M</div>
+                    <div class="text-emerald-400 text-sm font-medium">62.4% of supply</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LAUNCHPAD -->
+    <div id="launchpad" class="max-w-screen-2xl mx-auto px-8 pt-16 pb-12">
+        <div class="flex items-end justify-between mb-8">
+            <div>
+                <div class="flex items-center gap-x-3">
+                    <i class="fa-solid fa-rocket text-[#00C805] text-3xl"></i>
+                    <h2 class="section-header tracking-tighter">Launchpad</h2>
+                </div>
+                <p class="text-white/60 mt-1">Discover and invest in the next generation of crypto projects</p>
+            </div>
+            <button onclick="showCreateLaunchModal()" 
+                    class="hidden md:flex items-center gap-x-2 px-5 py-2.5 text-sm font-semibold rounded-3xl bg-[#00C805] text-black hover:bg-[#00b004] transition-all active:scale-[0.985]">
+                <i class="fa-solid fa-plus"></i>
+                <span>Create New Launch</span>
+            </button>
+        </div>
+
+        <!-- Launch Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            
+            <!-- Card 1: Nova Finance -->
+            <div class="crypto-card glass rounded-3xl p-6 border border-white/10 flex flex-col">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="flex items-center gap-x-3">
+                        <div class="token-logo bg-gradient-to-br from-violet-500 to-indigo-600 text-white text-xl">N</div>
+                        <div>
+                            <div class="font-semibold text-xl">Nova Finance</div>
+                            <div class="text-emerald-400 text-xs font-mono">$NOVA</div>
+                        </div>
+                    </div>
+                    <div class="px-3 py-1 text-xs font-medium bg-emerald-500/10 text-emerald-400 rounded-2xl flex items-center">LIVE</div>
+                </div>
+                
+                <p class="text-white/70 text-sm mb-5 line-clamp-2">AI-powered decentralized perpetuals exchange with zero slippage.</p>
+                
+                <div class="mb-4">
+                    <div class="flex justify-between text-xs mb-1.5">
+                        <span class="text-white/60">Raised</span>
+                        <span class="font-mono font-medium">$18.4M / $25M</span>
+                    </div>
+                    <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                        <div class="launch-progress w-[73.6%]" style="width: 73.6%"></div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between items-end mt-auto">
+                    <div>
+                        <div class="text-xs text-white/50">Ends in</div>
+                        <div class="font-mono text-sm font-medium">2d 14h</div>
+                    </div>
+                    <button onclick="investInLaunch(0)" 
+                            class="px-6 py-2.5 text-sm font-semibold bg-white text-black rounded-3xl active:scale-[0.985] transition-all hover:bg-white/90">
+                        Invest Now
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card 2: Pulse Chain -->
+            <div class="crypto-card glass rounded-3xl p-6 border border-white/10 flex flex-col">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="flex items-center gap-x-3">
+                        <div class="token-logo bg-gradient-to-br from-rose-500 to-orange-600 text-white text-xl">P</div>
+                        <div>
+                            <div class="font-semibold text-xl">Pulse Chain</div>
+                            <div class="text-emerald-400 text-xs font-mono">$PULSE</div>
+                        </div>
+                    </div>
+                    <div class="px-3 py-1 text-xs font-medium bg-emerald-500/10 text-emerald-400 rounded-2xl flex items-center">LIVE</div>
+                </div>
+                
+                <p class="text-white/70 text-sm mb-5 line-clamp-2">The fastest L1 for real-world assets and institutional DeFi.</p>
+                
+                <div class="mb-4">
+                    <div class="flex justify-between text-xs mb-1.5">
+                        <span class="text-white/60">Raised</span>
+                        <span class="font-mono font-medium">$41.2M / $60M</span>
+                    </div>
+                    <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                        <div class="launch-progress w-[68.7%]" style="width: 68.7%"></div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between items-end mt-auto">
+                    <div>
+                        <div class="text-xs text-white/50">Ends in</div>
+                        <div class="font-mono text-sm font-medium">5d 9h</div>
+                    </div>
+                    <button onclick="investInLaunch(1)" 
+                            class="px-6 py-2.5 text-sm font-semibold bg-white text-black rounded-3xl active:scale-[0.985] transition-all hover:bg-white/90">
+                        Invest Now
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card 3: Quantum Labs -->
+            <div class="crypto-card glass rounded-3xl p-6 border border-white/10 flex flex-col">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="flex items-center gap-x-3">
+                        <div class="token-logo bg-gradient-to-br from-cyan-400 to-teal-500 text-black text-xl">Q</div>
+                        <div>
+                            <div class="font-semibold text-xl">Quantum Labs</div>
+                            <div class="text-emerald-400 text-xs font-mono">$QNTM</div>
+                        </div>
+                    </div>
+                    <div class="px-3 py-1 text-xs font-medium bg-amber-500/10 text-amber-400 rounded-2xl flex items-center">UPCOMING</div>
+                </div>
+                
+                <p class="text-white/70 text-sm mb-5 line-clamp-2">Post-quantum cryptography infrastructure for the next decade of Web3.</p>
+                
+                <div class="mb-4">
+                    <div class="flex justify-between text-xs mb-1.5">
+                        <span class="text-white/60">Target Raise</span>
+                        <span class="font-mono font-medium">$12M</span>
+                    </div>
+                    <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                        <div class="launch-progress w-0" style="width: 0%"></div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between items-end mt-auto">
+                    <div>
+                        <div class="text-xs text-white/50">Starts in</div>
+                        <div class="font-mono text-sm font-medium">Jan 28</div>
+                    </div>
+                    <button onclick="investInLaunch(2)" 
+                            class="px-6 py-2.5 text-sm font-semibold border border-white/30 hover:bg-white/5 rounded-3xl transition-all">
+                        Join Waitlist
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card 4: MemeForge -->
+            <div class="crypto-card glass rounded-3xl p-6 border border-white/10 flex flex-col">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="flex items-center gap-x-3">
+                        <div class="token-logo bg-gradient-to-br from-fuchsia-500 to-pink-600 text-white text-xl">MF</div>
+                        <div>
+                            <div class="font-semibold text-xl">MemeForge</div>
+                            <div class="text-emerald-400 text-xs font-mono">$FORGE</div>
+                        </div>
+                    </div>
+                    <div class="px-3 py-1 text-xs font-medium bg-emerald-500/10 text-emerald-400 rounded-2xl flex items-center">LIVE</div>
+                </div>
+                
+                <p class="text-white/70 text-sm mb-5 line-clamp-2">Community-driven meme coin launchpad with built-in liquidity tools.</p>
+                
+                <div class="mb-4">
+                    <div class="flex justify-between text-xs mb-1.5">
+                        <span class="text-white/60">Raised</span>
+                        <span class="font-mono font-medium">$3.1M / $5M</span>
+                    </div>
+                    <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                        <div class="launch-progress w-[62%]" style="width: 62%"></div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between items-end mt-auto">
+                    <div>
+                        <div class="text-xs text-white/50">Ends in</div>
+                        <div class="font-mono text-sm font-medium">11h 42m</div>
+                    </div>
+                    <button onclick="investInLaunch(3)" 
+                            class="px-6 py-2.5 text-sm font-semibold bg-white text-black rounded-3xl active:scale-[0.985] transition-all hover:bg-white/90">
+                        Invest Now
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- STAKING -->
+    <div id="staking" class="max-w-screen-2xl mx-auto px-8 py-12 border-t border-white/10">
+        <div class="flex items-end justify-between mb-8">
+            <div>
+                <div class="flex items-center gap-x-3">
+                    <i class="fa-solid fa-lock text-[#00C805] text-3xl"></i>
+                    <h2 class="section-header tracking-tighter">Staking</h2>
+                </div>
+                <p class="text-white/60 mt-1">Earn real yield. Secure the network. Govern the future.</p>
+            </div>
+            <div class="text-right text-sm">
+                <div class="text-white/50">Average APY</div>
+                <div class="text-3xl font-semibold text-emerald-400">18.4%</div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            
+            <!-- $RHUB Native Pool (Featured) -->
+            <div class="crypto-card glass border border-[#00C805]/30 rounded-3xl p-6 col-span-1 lg:col-span-1 relative overflow-hidden">
+                <div class="absolute top-0 right-0 px-4 py-1 bg-[#00C805] text-black text-xs font-bold rounded-bl-3xl">NATIVE</div>
+                
+                <div class="flex items-center gap-x-3 mb-5">
+                    <div class="token-logo bg-[#00C805] text-black text-2xl font-black">R</div>
+                    <div>
+                        <div class="font-semibold text-2xl">$RHUB</div>
+                        <div class="text-emerald-400 text-sm">Robinhood Hub Token</div>
+                    </div>
+                </div>
+                
+                <div class="flex items-baseline gap-x-2 mb-1">
+                    <span class="text-5xl font-semibold tabular-nums">24.8</span>
+                    <span class="text-emerald-400 font-medium">%</span>
+                </div>
+                <div class="text-white/60 text-sm mb-6">APY • 90-day lock boost available</div>
+                
+                <div class="space-y-3 text-sm mb-6">
+                    <div class="flex justify-between"><span class="text-white/60">Total Staked</span> <span class="font-mono font-medium">48.7M $RHUB</span></div>
+                    <div class="flex justify-between"><span class="text-white/60">Your Stake</span> <span class="font-mono font-medium" id="rhub-staked-amount">4,850</span></div>
+                    <div class="flex justify-between"><span class="text-white/60">Pending Rewards</span> <span class="font-mono text-emerald-400 font-medium" id="rhub-rewards">184.3</span></div>
+                </div>
+                
+                <div class="flex gap-3">
+                    <button onclick="stakeTokens('RHUB')" 
+                            class="flex-1 py-3 rounded-3xl bg-[#00C805] hover:bg-[#00b004] text-black font-semibold text-sm transition-all active:scale-[0.985]">
+                        Stake $RHUB
+                    </button>
+                    <button onclick="claimRewards('RHUB')" 
+                            class="flex-1 py-3 rounded-3xl border border-white/20 hover:bg-white/5 text-sm font-semibold transition-all">
+                        Claim
+                    </button>
+                </div>
+            </div>
+
+            <!-- Other Pools -->
+            <div class="crypto-card glass border border-white/10 rounded-3xl p-6">
+                <div class="flex items-center gap-x-3 mb-4">
+                    <div class="token-logo bg-blue-500 text-white">Ξ</div>
+                    <div class="flex-1">
+                        <div class="font-semibold">ETH Staking</div>
+                        <div class="text-xs text-white/50">Ethereum • Robinhood L2</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-emerald-400 font-semibold">9.2%</div>
+                        <div class="text-[10px] text-white/50">APY</div>
+                    </div>
+                </div>
+                <div class="text-xs space-y-1.5 mb-5 text-white/70">
+                    <div class="flex justify-between"><span>TVL</span><span class="font-mono">$812M</span></div>
+                    <div class="flex justify-between"><span>Your stake</span><span class="font-mono" id="eth-staked">1.84 ETH</span></div>
+                </div>
+                <button onclick="stakeTokens('ETH')" 
+                        class="w-full py-2.5 text-sm font-semibold rounded-3xl border border-white/20 hover:bg-white/5 transition-colors">Stake ETH</button>
+            </div>
+
+            <div class="crypto-card glass border border-white/10 rounded-3xl p-6">
+                <div class="flex items-center gap-x-3 mb-4">
+                    <div class="token-logo bg-purple-500 text-white">◎</div>
+                    <div class="flex-1">
+                        <div class="font-semibold">SOL Staking</div>
+                        <div class="text-xs text-white/50">Solana • High throughput</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-emerald-400 font-semibold">14.6%</div>
+                        <div class="text-[10px] text-white/50">APY</div>
+                    </div>
+                </div>
+                <div class="text-xs space-y-1.5 mb-5 text-white/70">
+                    <div class="flex justify-between"><span>TVL</span><span class="font-mono">$421M</span></div>
+                    <div class="flex justify-between"><span>Your stake</span><span class="font-mono" id="sol-staked">42.5 SOL</span></div>
+                </div>
+                <button onclick="stakeTokens('SOL')" 
+                        class="w-full py-2.5 text-sm font-semibold rounded-3xl border border-white/20 hover:bg-white/5 transition-colors">Stake SOL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TRADE -->
+    <div id="trade" class="max-w-screen-2xl mx-auto px-8 py-12 border-t border-white/10">
+        <div class="flex items-end justify-between mb-8">
+            <div>
+                <div class="flex items-center gap-x-3">
+                    <i class="fa-solid fa-chart-line text-[#00C805] text-3xl"></i>
+                    <h2 class="section-header tracking-tighter">Trade</h2>
+                </div>
+                <p class="text-white/60">Zero fees. Instant settlement. Built on Robinhood Blockchain.</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+            <!-- Chart + Pair selector -->
+            <div class="xl:col-span-8 glass rounded-3xl border border-white/10 p-6">
+                <div class="flex items-center justify-between mb-5">
+                    <div class="flex items-center gap-x-4">
+                        <select id="pair-select" onchange="updateTradePair()" class="bg-black border border-white/20 text-white rounded-2xl px-4 py-2 text-sm font-medium">
+                            <option value="RHUB/USDC">RHUB / USDC</option>
+                            <option value="ETH/USDC">ETH / USDC</option>
+                            <option value="SOL/USDC">SOL / USDC</option>
+                            <option value="BTC/USDC">BTC / USDC</option>
+                        </select>
+                        <div>
+                            <span id="current-price" class="font-mono text-3xl font-semibold">$1.84</span>
+                            <span class="ml-2 text-emerald-400 text-sm font-medium">+4.82%</span>
+                        </div>
+                    </div>
+                    <div class="text-xs text-white/50">24h Volume: <span class="font-mono">$184.2M</span></div>
+                </div>
+                
+                <!-- Chart -->
+                <div class="h-[280px] relative">
+                    <canvas id="price-chart"></canvas>
+                </div>
+            </div>
+
+            <!-- Order Panel -->
+            <div class="xl:col-span-4 glass rounded-3xl border border-white/10 p-6 flex flex-col">
+                <div class="flex mb-4 border-b border-white/10">
+                    <button onclick="switchOrderType(0)" id="buy-tab"
+                            class="flex-1 py-2 text-center font-semibold border-b-2 border-[#00C805] text-[#00C805]">BUY</button>
+                    <button onclick="switchOrderType(1)" id="sell-tab"
+                            class="flex-1 py-2 text-center font-semibold text-white/60 hover:text-white">SELL</button>
+                </div>
+
+                <div class="space-y-4 flex-1">
+                    <div>
+                        <div class="text-xs text-white/60 mb-1.5">Amount</div>
+                        <div class="flex items-center bg-black/60 border border-white/10 rounded-2xl px-4">
+                            <input id="order-amount" type="number" value="1000" class="flex-1 bg-transparent py-3 text-xl font-mono outline-none">
+                            <div class="text-white/60 font-medium pr-1" id="order-unit">USDC</div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 text-xs">
+                        <div class="bg-black/40 border border-white/10 rounded-2xl p-3">
+                            <div class="text-white/50">Est. Price</div>
+                            <div class="font-mono text-lg font-medium" id="est-price">$1.84</div>
+                        </div>
+                        <div class="bg-black/40 border border-white/10 rounded-2xl p-3">
+                            <div class="text-white/50">You Receive</div>
+                            <div class="font-mono text-lg font-medium" id="receive-amount">543.48 RHUB</div>
+                        </div>
+                    </div>
+
+                    <div class="text-xs flex justify-between text-white/60">
+                        <div>Slippage Tolerance</div>
+                        <div class="font-medium text-white">0.5%</div>
+                    </div>
+                </div>
+
+                <button onclick="executeTrade()" 
+                        class="mt-6 w-full py-4 rounded-3xl font-bold text-lg bg-[#00C805] hover:bg-[#00b004] active:scale-[0.985] text-black transition-all">
+                    Place Market Buy
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- $RHUB TOKEN -->
+    <div id="token" class="max-w-screen-2xl mx-auto px-8 py-14 border-t border-white/10">
+        <div class="max-w-4xl mx-auto text-center mb-10">
+            <div class="inline px-4 py-1 rounded-3xl bg-white/5 text-xs tracking-[2px] font-medium mb-3">NATIVE TOKEN</div>
+            <h2 class="section-header tracking-tighter mb-3">$RHUB — Powering the Hub</h2>
+            <p class="text-xl text-white/70">The utility and governance token of RHub. Stake it, govern launches, earn protocol revenue.</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+            <!-- Tokenomics -->
+            <div class="glass border border-white/10 rounded-3xl p-8">
+                <h3 class="font-semibold mb-6 flex items-center gap-x-2"><i class="fa-solid fa-pie-chart text-[#00C805]"></i> Tokenomics</h3>
+                
+                <div class="space-y-4 text-sm">
+                    <div class="flex justify-between items-center"><span>Total Supply</span> <span class="font-mono font-medium">100,000,000</span></div>
+                    <div class="flex justify-between items-center"><span>Circulating</span> <span class="font-mono font-medium">78.4M (78.4%)</span></div>
+                    <div class="flex justify-between items-center"><span>Staked</span> <span class="font-mono font-medium text-emerald-400">48.7M</span></div>
+                    
+                    <div class="pt-4 border-t border-white/10">
+                        <div class="text-xs uppercase tracking-widest text-white/50 mb-3">Allocation</div>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between"><span>Community &amp; Ecosystem</span><span class="font-mono">35%</span></div>
+                            <div class="flex justify-between"><span>Staking Rewards</span><span class="font-mono">25%</span></div>
+                            <div class="flex justify-between"><span>Team &amp; Advisors (vested)</span><span class="font-mono">15%</span></div>
+                            <div class="flex justify-between"><span>Launchpad Treasury</span><span class="font-mono">15%</span></div>
+                            <div class="flex justify-between"><span>Liquidity &amp; Marketing</span><span class="font-mono">10%</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Utilities -->
+            <div class="glass border border-white/10 rounded-3xl p-8">
+                <h3 class="font-semibold mb-5">Utility &amp; Benefits</h3>
+                <div class="space-y-4">
+                    <div class="flex gap-4">
+                        <div class="mt-1"><i class="fa-solid fa-vote-yea text-[#00C805] w-5"></i></div>
+                        <div class="text-sm"><span class="font-medium">Governance</span><br><span class="text-white/60">Vote on new launches, fee structure &amp; protocol upgrades</span></div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="mt-1"><i class="fa-solid fa-percentage text-[#00C805] w-5"></i></div>
+                        <div class="text-sm"><span class="font-medium">Revenue Share</span><br><span class="text-white/60">Earn 40% of platform trading &amp; launch fees</span></div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="mt-1"><i class="fa-solid fa-rocket text-[#00C805] w-5"></i></div>
+                        <div class="text-sm"><span class="font-medium">Launchpad Priority</span><br><span class="text-white/60">Early access + allocation boosts on new projects</span></div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="mt-1"><i class="fa-solid fa-bolt text-[#00C805] w-5"></i></div>
+                        <div class="text-sm"><span class="font-medium">Fee Discounts</span><br><span class="text-white/60">Up to 50% off trading fees when staking</span></div>
+                    </div>
+                </div>
+                
+                <button onclick="document.getElementById('trade').scrollIntoView({ behavior: 'smooth' })" 
+                        class="mt-8 w-full py-3.5 text-sm font-semibold rounded-3xl bg-white/5 hover:bg-white/10 border border-white/20 transition-colors">
+                    Trade $RHUB Now →
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PORTFOLIO -->
+    <div id="portfolio" class="max-w-screen-2xl mx-auto px-8 py-12 border-t border-white/10">
+        <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center gap-x-3">
+                <i class="fa-solid fa-wallet text-[#00C805] text-3xl"></i>
+                <h2 class="section-header tracking-tighter">Your Portfolio</h2>
+            </div>
+            <div id="portfolio-value" class="text-right">
+                <div class="text-xs text-white/50">TOTAL VALUE</div>
+                <div class="text-4xl font-semibold tabular-nums" id="total-portfolio">$87,942</div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <!-- Holdings -->
+            <div class="md:col-span-2 glass border border-white/10 rounded-3xl p-6">
+                <div class="text-sm font-medium mb-4 flex items-center justify-between">
+                    <span>Holdings</span>
+                    <span class="text-xs text-white/50">Updated just now</span>
+                </div>
+                
+                <div class="space-y-1 text-sm" id="holdings-list">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="glass border border-white/10 rounded-3xl p-6">
+                <div class="text-sm font-medium mb-4">Quick Actions</div>
+                <div class="space-y-3">
+                    <button onclick="document.getElementById('staking').scrollIntoView({ behavior: 'smooth' })" 
+                            class="w-full flex items-center justify-between px-5 py-3.5 rounded-2xl bg-white/5 hover:bg-white/10 text-left text-sm font-medium transition-colors">
+                        <span>Stake more assets</span>
+                        <i class="fa-solid fa-arrow-right text-white/40"></i>
+                    </button>
+                    <button onclick="document.getElementById('launchpad').scrollIntoView({ behavior: 'smooth' })" 
+                            class="w-full flex items-center justify-between px-5 py-3.5 rounded-2xl bg-white/5 hover:bg-white/10 text-left text-sm font-medium transition-colors">
+                        <span>View open launches</span>
+                        <i class="fa-solid fa-arrow-right text-white/40"></i>
+                    </button>
+                    <button onclick="executeTrade()" 
+                            class="w-full flex items-center justify-between px-5 py-3.5 rounded-2xl bg-white/5 hover:bg-white/10 text-left text-sm font-medium transition-colors">
+                        <span>Trade $RHUB</span>
+                        <i class="fa-solid fa-arrow-right text-white/40"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-white/10 py-8 text-center text-xs text-white/40">
+        <div class="max-w-screen-2xl mx-auto px-8">
+            Built for the next era of crypto • RHub © 2026 • 
+            <span class="font-mono">Powered by Robinhood Blockchain</span>
+        </div>
+    </footer>
+
+    <!-- INVEST MODAL -->
+    <div id="invest-modal" onclick="if (event.target.id === 'invest-modal') hideInvestModal()" class="hidden fixed inset-0 z-[100] bg-black/70 flex items-center justify-center p-6">
+        <div onclick="event.stopImmediatePropagation()" class="modal glass border border-white/20 rounded-3xl w-full max-w-md p-8">
+            <div class="flex justify-between mb-6">
+                <div>
+                    <div class="font-semibold text-2xl" id="modal-project-name">Nova Finance</div>
+                    <div class="text-emerald-400 text-sm font-mono" id="modal-project-ticker">$NOVA</div>
+                </div>
+                <button onclick="hideInvestModal()" class="text-white/50 hover:text-white text-2xl leading-none">×</button>
+            </div>
+
+            <div class="mb-6">
+                <div class="text-xs text-white/60 mb-2">AMOUNT TO INVEST (USDC)</div>
+                <input type="number" id="invest-amount" value="2500" class="w-full bg-black border border-white/20 text-4xl font-mono py-4 px-5 rounded-2xl outline-none">
+                <div class="flex justify-between text-xs mt-2 px-1">
+                    <div class="text-white/50">Balance: <span id="modal-usdc-balance">12,450.75</span> USDC</div>
+                    <button onclick="maxInvest()" class="text-[#00C805] font-medium">MAX</button>
+                </div>
+            </div>
+
+            <div class="bg-black/60 rounded-2xl p-4 text-sm mb-6 space-y-2">
+                <div class="flex justify-between"><span class="text-white/60">You will receive</span> <span id="modal-tokens-receive" class="font-mono font-medium">1,250 $NOVA</span></div>
+                <div class="flex justify-between"><span class="text-white/60">Est. price</span> <span class="font-mono">$2.00</span></div>
+                <div class="flex justify-between text-xs pt-2 border-t border-white/10"><span class="text-white/60">Platform fee (0.5%)</span> <span>$12.50</span></div>
+            </div>
+
+            <button onclick="confirmInvestment()" 
+                    class="w-full py-4 bg-[#00C805] hover:bg-[#00b004] active:scale-[0.985] text-black font-bold rounded-3xl text-lg transition-all">
+                Confirm Investment
+            </button>
+            <div class="text-center text-xs text-white/50 mt-3">Funds held in escrow until launch completes</div>
+        </div>
+    </div>
+
+    <!-- STAKE MODAL -->
+    <div id="stake-modal" onclick="if (event.target.id === 'stake-modal') hideStakeModal()" class="hidden fixed inset-0 z-[100] bg-black/70 flex items-center justify-center p-6">
+        <div onclick="event.stopImmediatePropagation()" class="modal glass border border-white/20 rounded-3xl w-full max-w-md p-8">
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <div class="font-semibold text-2xl">Stake <span id="stake-token-name">RHUB</span></div>
+                    <div class="text-sm text-white/60">Earn <span id="stake-apy">24.8</span>% APY</div>
+                </div>
+                <button onclick="hideStakeModal()" class="text-3xl text-white/40 hover:text-white leading-none">×</button>
+            </div>
+
+            <div class="mb-5">
+                <div class="flex justify-between text-xs mb-1 px-1">
+                    <span class="text-white/60">Amount</span>
+                    <span class="text-white/60">Balance: <span id="stake-balance">4,850</span></span>
+                </div>
+                <div class="flex bg-black border border-white/20 rounded-3xl px-5 items-center">
+                    <input id="stake-amount" type="number" value="1000" class="flex-1 py-4 text-3xl font-mono bg-transparent outline-none">
+                    <span class="font-medium text-lg text-white/70" id="stake-unit">RHUB</span>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <div class="text-xs text-white/60 mb-2 px-1">Lock period (higher APY)</div>
+                <div class="grid grid-cols-3 gap-2 text-sm">
+                    <div onclick="selectLockPeriod(this, 30)" class="lock-option cursor-pointer text-center py-2 rounded-2xl border border-white/20 bg-black/40">30 days <span class="block text-[10px] text-emerald-400">+2% APY</span></div>
+                    <div onclick="selectLockPeriod(this, 60)" class="lock-option cursor-pointer text-center py-2 rounded-2xl border border-[#00C805] bg-[#00C805]/10">60 days <span class="block text-[10px] text-emerald-400">+6% APY</span></div>
+                    <div onclick="selectLockPeriod(this, 90)" class="lock-option cursor-pointer text-center py-2 rounded-2xl border border-white/20 bg-black/40">90 days <span class="block text-[10px] text-emerald-400">+12% APY</span></div>
+                </div>
+            </div>
+
+            <button onclick="confirmStake()" 
+                    class="w-full py-4 bg-[#00C805] text-black font-bold rounded-3xl active:scale-[0.985]">
+                Stake Tokens
+            </button>
+        </div>
+    </div>
+
+    <!-- CREATE LAUNCH MODAL -->
+    <div id="create-launch-modal" onclick="if (event.target.id === 'create-launch-modal') hideCreateLaunchModal()" class="hidden fixed inset-0 z-[100] bg-black/70 flex items-center justify-center p-6">
+        <div onclick="event.stopImmediatePropagation()" class="modal glass border border-white/20 rounded-3xl w-full max-w-lg p-8">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <div class="font-semibold text-2xl">Deploy New Token</div>
+                    <div class="text-sm text-white/60">On Robinhood Blockchain • Instant deployment</div>
+                </div>
+                <button onclick="hideCreateLaunchModal()" class="text-3xl text-white/40 hover:text-white leading-none">×</button>
+            </div>
+
+            <div class="space-y-5">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs text-white/60 block mb-1.5">Project Name</label>
+                        <input id="launch-name" type="text" value="Aether Protocol" class="w-full bg-black border border-white/20 rounded-2xl px-4 py-3 text-sm outline-none">
+                    </div>
+                    <div>
+                        <label class="text-xs text-white/60 block mb-1.5">Ticker</label>
+                        <input id="launch-ticker" type="text" value="$AETH" class="w-full bg-black border border-white/20 rounded-2xl px-4 py-3 text-sm outline-none font-mono">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-xs text-white/60 block mb-1.5">Short Description</label>
+                    <textarea id="launch-desc" rows="2" class="w-full bg-black border border-white/20 rounded-2xl px-4 py-3 text-sm outline-none">Next-gen AI infrastructure for decentralized compute.</textarea>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs text-white/60 block mb-1.5">Target Raise (USD)</label>
+                        <input id="launch-target" type="number" value="15000000" class="w-full bg-black border border-white/20 rounded-2xl px-4 py-3 text-sm outline-none font-mono">
+                    </div>
+                    <div>
+                        <label class="text-xs text-white/60 block mb-1.5">Initial Price (USD)</label>
+                        <input id="launch-price" type="number" step="0.01" value="1.25" class="w-full bg-black border border-white/20 rounded-2xl px-4 py-3 text-sm outline-none font-mono">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs text-white/60 block mb-1.5">Total Supply</label>
+                        <input id="launch-supply" type="number" value="100000000" class="w-full bg-black border border-white/20 rounded-2xl px-4 py-3 text-sm outline-none font-mono">
+                    </div>
+                    <div>
+                        <label class="text-xs text-white/60 block mb-1.5">Token Logo Color</label>
+                        <select id="launch-color" class="w-full bg-black border border-white/20 rounded-2xl px-4 py-3 text-sm outline-none">
+                            <option value="from-violet-500 to-indigo-600">Violet / Indigo</option>
+                            <option value="from-emerald-500 to-teal-600">Emerald / Teal</option>
+                            <option value="from-rose-500 to-orange-600">Rose / Orange</option>
+                            <option value="from-cyan-400 to-blue-600">Cyan / Blue</option>
+                            <option value="from-fuchsia-500 to-pink-600">Fuchsia / Pink</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 flex gap-3">
+                <button onclick="hideCreateLaunchModal()" 
+                        class="flex-1 py-3.5 rounded-3xl border border-white/20 text-sm font-semibold hover:bg-white/5 transition-colors">
+                    Cancel
+                </button>
+                <button onclick="deployTokenToRobinhoodChain()" 
+                        class="flex-1 py-3.5 rounded-3xl bg-[#00C805] text-black font-bold text-sm active:scale-[0.985] transition-all">
+                    Deploy Token on Robinhood Blockchain
+                </button>
+            </div>
+            
+            <div class="text-center text-[10px] text-white/40 mt-4">Gas fee: ~0.0008 $RHUB • Confirmation in &lt;1s</div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-[200] space-y-3"></div>
+
+    <script>
+        // Tailwind script
+        function initTailwind() {
+            document.documentElement.style.setProperty('--accent', '#00C805');
+            
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            'display': ['Space Grotesk', 'Inter', 'system-ui', 'sans-serif']
+                        }
+                    }
+                }
+            };
+        }
+
+        // Global State
+        let walletConnected = false;
+        let walletAddress = '';
+        let balances = {
+            USDC: 12450.75,
+            ETH: 3.24,
+            SOL: 42.5,
+            RHUB: 12580,
+            NOVA: 0,
+            PULSE: 0,
+            FORGE: 0
+        };
+        let stakedAmounts = {
+            RHUB: 4850,
+            ETH: 1.84,
+            SOL: 42.5
+        };
+        let pendingRewards = {
+            RHUB: 184.3
+        };
+        let portfolio = {
+            total: 87942
+        };
+        let currentLaunchIndex = 0;
+        let currentStakeToken = 'RHUB';
+        let selectedLockDays = 60;
+        let currentOrderType = 0; // 0 = buy, 1 = sell
+        let priceChart = null;
+
+        // Safe localStorage helpers (prevents errors in sandboxed iframes / file://)
+        function safeGetItem(key) {
+            try {
+                return localStorage.getItem(key);
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function safeSetItem(key, value) {
+            try {
+                localStorage.setItem(key, value);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        // Fake launch data
+        const launches = [
+            { name: "Nova Finance", ticker: "$NOVA", price: 2.00, raised: 18.4, target: 25, progress: 73.6 },
+            { name: "Pulse Chain", ticker: "$PULSE", price: 1.25, raised: 41.2, target: 60, progress: 68.7 },
+            { name: "Quantum Labs", ticker: "$QNTM", price: 4.50, raised: 0, target: 12, progress: 0 },
+            { name: "MemeForge", ticker: "$FORGE", price: 0.0085, raised: 3.1, target: 5, progress: 62 }
+        ];
+
+        function updateStats() {
+            // Animate numbers (simple version)
+            document.getElementById('tvl').innerHTML = '2.84';
+            document.getElementById('users').innerHTML = '184.3k';
+            document.getElementById('launches').innerHTML = '127';
+            document.getElementById('rhub-staked').innerHTML = '48.7M';
+        }
+
+        function updatePortfolioUI() {
+            const holdingsContainer = document.getElementById('holdings-list');
+            holdingsContainer.innerHTML = '';
+
+            const holdings = [
+                { symbol: 'USDC', amount: balances.USDC, value: balances.USDC, change: '+0.02%' },
+                { symbol: 'ETH', amount: balances.ETH, value: balances.ETH * 3120, change: '+2.4%' },
+                { symbol: 'SOL', amount: balances.SOL, value: balances.SOL * 148, change: '-1.1%' },
+                { symbol: 'RHUB', amount: balances.RHUB, value: balances.RHUB * 1.84, change: '+4.8%' }
+            ];
+
+            if (balances.NOVA > 0) holdings.push({ symbol: 'NOVA', amount: balances.NOVA, value: balances.NOVA * 2.00, change: '+12.4%' });
+            if (balances.PULSE > 0) holdings.push({ symbol: 'PULSE', amount: balances.PULSE, value: balances.PULSE * 1.25, change: '+8.7%' });
+
+            let total = 0;
+            holdings.forEach(h => total += h.value);
+
+            portfolio.total = total;
+            document.getElementById('total-portfolio').innerHTML = '$' + total.toLocaleString();
+
+            holdings.forEach(h => {
+                const pct = ((h.value / total) * 100).toFixed(1);
+                const div = document.createElement('div');
+                div.className = `flex items-center justify-between py-3 px-4 rounded-2xl hover:bg-white/5 transition-colors ${h.symbol === 'RHUB' ? 'bg-white/5' : ''}`;
+                div.innerHTML = `
+                    <div class="flex items-center gap-x-3">
+                        <div class="w-9 h-9 rounded-2xl flex items-center justify-center text-xs font-bold ${h.symbol === 'RHUB' ? 'bg-[#00C805] text-black' : 'bg-white/10'}">${h.symbol}</div>
+                        <div>
+                            <div class="font-medium">${h.symbol}</div>
+                            <div class="text-xs text-white/50 font-mono">${h.amount.toLocaleString()} tokens</div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-mono font-medium">$${h.value.toLocaleString()}</div>
+                        <div class="text-xs ${h.change.startsWith('+') ? 'text-emerald-400' : 'text-red-400'}">${h.change}</div>
+                    </div>
+                `;
+                holdingsContainer.appendChild(div);
+            });
+        }
+
+        function updateStakedUI() {
+            document.getElementById('rhub-staked-amount').innerHTML = stakedAmounts.RHUB.toLocaleString();
+            document.getElementById('rhub-rewards').innerHTML = pendingRewards.RHUB.toFixed(1);
+            
+            const ethEl = document.getElementById('eth-staked');
+            if (ethEl) ethEl.innerHTML = stakedAmounts.ETH + ' ETH';
+            
+            const solEl = document.getElementById('sol-staked');
+            if (solEl) solEl.innerHTML = stakedAmounts.SOL + ' SOL';
+        }
+
+        function updateBalancesInUI() {
+            // Update any visible balance texts if needed
+            const usdcEls = document.querySelectorAll('#modal-usdc-balance');
+            usdcEls.forEach(el => el.innerHTML = balances.USDC.toLocaleString());
+        }
+
+        // Wallet Connection
+        function toggleWallet() {
+            if (!walletConnected) {
+                // Simulate connect
+                walletConnected = true;
+                walletAddress = '0x' + Math.random().toString(16).slice(2, 10) + '...' + Math.random().toString(16).slice(2, 6);
+                
+                const btn = document.getElementById('wallet-btn');
+                btn.innerHTML = `
+                    <div class="flex items-center gap-x-2">
+                        <div class="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-pulse"></div>
+                        <span class="font-mono text-sm">${walletAddress}</span>
+                    </div>
+                `;
+                btn.classList.add('!bg-emerald-950', '!border-emerald-800', '!text-emerald-400');
+                btn.classList.remove('bg-transparent');
+                
+                showToast('Wallet connected successfully', 'success');
+                
+                // Show portfolio value immediately
+                updatePortfolioUI();
+            } else {
+                // Disconnect
+                walletConnected = false;
+                const btn = document.getElementById('wallet-btn');
+                btn.innerHTML = `
+                    <div class="flex items-center gap-x-2">
+                        <i class="fa-solid fa-wallet"></i>
+                        <span>Connect Wallet</span>
+                    </div>
+                `;
+                btn.classList.remove('!bg-emerald-950', '!border-emerald-800', '!text-emerald-400');
+                
+                showToast('Wallet disconnected', 'info');
+            }
+        }
+
+        function toggleMobileMenu() {
+            const nav = document.querySelector('nav');
+            alert('Mobile menu would open here (demo)');
+        }
+
+        // Launchpad Invest
+        function investInLaunch(index) {
+            currentLaunchIndex = index;
+            const launch = launches[index];
+            
+            document.getElementById('modal-project-name').innerHTML = launch.name;
+            document.getElementById('modal-project-ticker').innerHTML = launch.ticker;
+            document.getElementById('invest-amount').value = '2500';
+            
+            // Update receive amount
+            updateInvestReceiveAmount();
+            
+            document.getElementById('invest-modal').classList.remove('hidden');
+            document.getElementById('invest-modal').classList.add('flex');
+            
+            // Live update receive amount
+            const amountInput = document.getElementById('invest-amount');
+            amountInput.oninput = updateInvestReceiveAmount;
+        }
+
+        function updateInvestReceiveAmount() {
+            const amount = parseFloat(document.getElementById('invest-amount').value) || 0;
+            const launch = launches[currentLaunchIndex];
+            const tokens = (amount / launch.price).toFixed(2);
+            document.getElementById('modal-tokens-receive').innerHTML = `${tokens} ${launch.ticker}`;
+        }
+
+        function maxInvest() {
+            document.getElementById('invest-amount').value = Math.floor(balances.USDC);
+            updateInvestReceiveAmount();
+        }
+
+        function hideInvestModal() {
+            const modal = document.getElementById('invest-modal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+
+        function confirmInvestment() {
+            const amount = parseFloat(document.getElementById('invest-amount').value);
+            if (!amount || amount <= 0) {
+                showToast('Please enter a valid amount', 'error');
+                return;
+            }
+            if (amount > balances.USDC) {
+                showToast('Insufficient USDC balance', 'error');
+                return;
+            }
+
+            const launch = launches[currentLaunchIndex];
+            const tokensReceived = amount / launch.price;
+
+            // Update balances
+            balances.USDC -= amount;
+            
+            // Credit the new token
+            if (launch.ticker === '$NOVA') balances.NOVA = (balances.NOVA || 0) + tokensReceived;
+            else if (launch.ticker === '$PULSE') balances.PULSE = (balances.PULSE || 0) + tokensReceived;
+            else if (launch.ticker === '$FORGE') balances.FORGE = (balances.FORGE || 0) + tokensReceived;
+
+            hideInvestModal();
+            
+            showToast(`Successfully invested $${amount.toLocaleString()} in ${launch.name}!`, 'success');
+            
+            // Refresh UI
+            updatePortfolioUI();
+            updateBalancesInUI();
+            
+            // Fake progress update on card (demo only)
+            if (currentLaunchIndex < 2) {
+                launch.progress = Math.min(100, launch.progress + 4);
+                // In real app would re-render cards, but for demo we skip full refresh
+            }
+        }
+
+        // Staking
+        function stakeTokens(token) {
+            currentStakeToken = token;
+            const modal = document.getElementById('stake-modal');
+            
+            document.getElementById('stake-token-name').innerHTML = token;
+            document.getElementById('stake-apy').innerHTML = token === 'RHUB' ? '24.8' : (token === 'ETH' ? '9.2' : '14.6');
+            document.getElementById('stake-unit').innerHTML = token;
+            
+            let bal = 0;
+            if (token === 'RHUB') bal = balances.RHUB;
+            else if (token === 'ETH') bal = balances.ETH;
+            else if (token === 'SOL') bal = balances.SOL;
+            
+            document.getElementById('stake-balance').innerHTML = bal.toLocaleString();
+            document.getElementById('stake-amount').value = Math.min(1000, Math.floor(bal / 2));
+            
+            // Reset lock options
+            document.querySelectorAll('.lock-option').forEach(el => el.classList.remove('border-[#00C805]', 'bg-[#00C805]/10'));
+            document.querySelectorAll('.lock-option')[1].classList.add('border-[#00C805]', 'bg-[#00C805]/10'); // default 60d
+            selectedLockDays = 60;
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function selectLockPeriod(element, days) {
+            document.querySelectorAll('.lock-option').forEach(el => {
+                el.classList.remove('border-[#00C805]', 'bg-[#00C805]/10');
+                el.classList.add('border-white/20', 'bg-black/40');
+            });
+            element.classList.remove('border-white/20', 'bg-black/40');
+            element.classList.add('border-[#00C805]', 'bg-[#00C805]/10');
+            selectedLockDays = days;
+        }
+
+        function hideStakeModal() {
+            const modal = document.getElementById('stake-modal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+
+        function confirmStake() {
+            const amount = parseFloat(document.getElementById('stake-amount').value);
+            if (!amount || amount <= 0) {
+                showToast('Enter a valid amount to stake', 'error');
+                return;
+            }
+
+            const token = currentStakeToken;
+            let currentBal = 0;
+            
+            if (token === 'RHUB') currentBal = balances.RHUB;
+            else if (token === 'ETH') currentBal = balances.ETH;
+            else if (token === 'SOL') currentBal = balances.SOL;
+
+            if (amount > currentBal) {
+                showToast('Insufficient balance', 'error');
+                return;
+            }
+
+            // Update state
+            if (token === 'RHUB') {
+                balances.RHUB -= amount;
+                stakedAmounts.RHUB += amount;
+                // Bonus rewards for lock
+                const bonus = amount * (selectedLockDays / 365) * 0.12;
+                pendingRewards.RHUB += bonus;
+            } else if (token === 'ETH') {
+                balances.ETH -= amount;
+                stakedAmounts.ETH += amount;
+            } else if (token === 'SOL') {
+                balances.SOL -= amount;
+                stakedAmounts.SOL += amount;
+            }
+
+            hideStakeModal();
+            showToast(`Staked ${amount} ${token} successfully!`, 'success');
+            
+            updateStakedUI();
+            updatePortfolioUI();
+        }
+
+        function claimRewards(token) {
+            if (token === 'RHUB' && pendingRewards.RHUB > 0) {
+                balances.RHUB += pendingRewards.RHUB;
+                const claimed = pendingRewards.RHUB;
+                pendingRewards.RHUB = 0;
+                
+                showToast(`Claimed ${claimed.toFixed(1)} $RHUB rewards!`, 'success');
+                updateStakedUI();
+                updatePortfolioUI();
+            } else {
+                showToast('No rewards available yet', 'info');
+            }
+        }
+
+        // Trading
+        let chartInstance = null;
+
+        function initPriceChart() {
+            const ctx = document.getElementById('price-chart');
+            
+            if (chartInstance) chartInstance.destroy();
+            
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan 8', 'Jan 9', 'Jan 10', 'Jan 11', 'Jan 12', 'Jan 13', 'Jan 14'],
+                    datasets: [{
+                        label: 'RHUB Price',
+                        data: [1.42, 1.51, 1.48, 1.67, 1.71, 1.79, 1.84],
+                        borderColor: '#00C805',
+                        borderWidth: 3,
+                        tension: 0.35,
+                        fill: true,
+                        backgroundColor: 'rgba(0, 200, 5, 0.08)',
+                        pointRadius: 0,
+                        pointHoverRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { mode: 'index', intersect: false }
+                    },
+                    scales: {
+                        x: { grid: { color: 'rgba(255,255,255,0.06)' }, ticks: { color: '#666' } },
+                        y: { 
+                            grid: { color: 'rgba(255,255,255,0.06)' }, 
+                            ticks: { color: '#666', callback: (v) => '$' + v.toFixed(2) } 
+                        }
+                    },
+                    elements: {
+                        line: { borderJoinStyle: 'round' }
+                    }
+                }
+            });
+        }
+
+        function updateTradePair() {
+            const pair = document.getElementById('pair-select').value;
+            const priceEl = document.getElementById('current-price');
+            const receiveEl = document.getElementById('receive-amount');
+            
+            let price = 1.84;
+            let unit = 'RHUB';
+            
+            if (pair === 'ETH/USDC') { price = 3120; unit = 'ETH'; }
+            else if (pair === 'SOL/USDC') { price = 148; unit = 'SOL'; }
+            else if (pair === 'BTC/USDC') { price = 96400; unit = 'BTC'; }
+            
+            priceEl.innerHTML = '$' + price.toLocaleString();
+            document.getElementById('est-price').innerHTML = '$' + price.toLocaleString();
+            
+            // Update receive preview
+            const amt = parseFloat(document.getElementById('order-amount').value) || 1000;
+            const receive = (amt / price).toFixed(4);
+            receiveEl.innerHTML = `${receive} ${unit}`;
+            
+            // Update chart data slightly for demo
+            if (chartInstance && pair === 'RHUB/USDC') {
+                // keep original or randomize a bit
+            }
+        }
+
+        function switchOrderType(type) {
+            currentOrderType = type;
+            const buyTab = document.getElementById('buy-tab');
+            const sellTab = document.getElementById('sell-tab');
+            const btn = document.querySelector('#trade button[onclick="executeTrade()"]');
+            
+            if (type === 0) {
+                buyTab.classList.add('border-b-2', 'border-[#00C805]', 'text-[#00C805]');
+                buyTab.classList.remove('text-white/60');
+                sellTab.classList.remove('border-b-2', 'border-[#00C805]', 'text-[#00C805]');
+                sellTab.classList.add('text-white/60');
+                btn.innerHTML = 'Place Market Buy';
+                btn.style.backgroundColor = '#00C805';
+                btn.style.color = 'black';
+            } else {
+                sellTab.classList.add('border-b-2', 'border-red-500', 'text-red-400');
+                sellTab.classList.remove('text-white/60');
+                buyTab.classList.remove('border-b-2', 'border-[#00C805]', 'text-[#00C805]');
+                buyTab.classList.add('text-white/60');
+                btn.innerHTML = 'Place Market Sell';
+                btn.style.backgroundColor = '#ef4444';
+                btn.style.color = 'white';
+            }
+        }
+
+        function executeTrade() {
+            const pair = document.getElementById('pair-select').value;
+            const amount = parseFloat(document.getElementById('order-amount').value);
+            if (!amount || amount <= 0) {
+                showToast('Enter a valid amount', 'error');
+                return;
+            }
+
+            const [base, quote] = pair.split('/');
+            let price = 1.84;
+            
+            if (pair === 'ETH/USDC') price = 3120;
+            else if (pair === 'SOL/USDC') price = 148;
+            else if (pair === 'BTC/USDC') price = 96400;
+
+            const receiveAmount = amount / price;
+
+            if (currentOrderType === 0) { // BUY
+                if (balances[quote] < amount) {
+                    showToast(`Insufficient ${quote}`, 'error');
+                    return;
+                }
+                balances[quote] -= amount;
+                balances[base] = (balances[base] || 0) + receiveAmount;
+                showToast(`Bought ${receiveAmount.toFixed(4)} ${base} for $${amount}`, 'success');
+            } else { // SELL
+                if ((balances[base] || 0) < receiveAmount) {
+                    showToast(`Insufficient ${base}`, 'error');
+                    return;
+                }
+                balances[base] -= receiveAmount;
+                balances[quote] = (balances[quote] || 0) + amount;
+                showToast(`Sold ${receiveAmount.toFixed(4)} ${base} for $${amount}`, 'success');
+            }
+
+            // Refresh UI
+            updatePortfolioUI();
+            updateTradePair();
+            
+            // Small chart bump animation effect
+            if (chartInstance) {
+                const newData = chartInstance.data.datasets[0].data.map(v => v * (0.995 + Math.random() * 0.01));
+                chartInstance.data.datasets[0].data = newData;
+                chartInstance.update();
+            }
+        }
+
+        // Toast notifications
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            let icon = 'fa-check-circle';
+            let color = 'bg-emerald-600';
+            
+            if (type === 'error') {
+                icon = 'fa-exclamation-circle';
+                color = 'bg-red-600';
+            } else if (type === 'info') {
+                icon = 'fa-info-circle';
+                color = 'bg-zinc-700';
+            }
+            
+            toast.className = `flex items-center gap-x-3 px-6 py-4 rounded-3xl shadow-2xl ${color} text-white max-w-xs`;
+            toast.innerHTML = `
+                <i class="fa-solid ${icon} text-xl"></i>
+                <div class="text-sm font-medium">${message}</div>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.transition = 'all 0.3s ease';
+                toast.style.opacity = '0';
+                setTimeout(() => toast.parentNode.removeChild(toast), 300);
+            }, 3200);
+        }
+
+        function selectLockPeriodInit() {
+            // Already handled in stake modal
+        }
+
+        function applyInitialListeners() {
+            // Order amount live update
+            const orderInput = document.getElementById('order-amount');
+            if (orderInput) {
+                orderInput.addEventListener('input', () => {
+                    const pair = document.getElementById('pair-select').value;
+                    let price = 1.84;
+                    let unit = 'RHUB';
+                    
+                    if (pair === 'ETH/USDC') { price = 3120; unit = 'ETH'; }
+                    else if (pair === 'SOL/USDC') { price = 148; unit = 'SOL'; }
+                    else if (pair === 'BTC/USDC') { price = 96400; unit = 'BTC'; }
+                    
+                    const amt = parseFloat(orderInput.value) || 0;
+                    const receive = (amt / price).toFixed(4);
+                    document.getElementById('receive-amount').innerHTML = `${receive} ${unit}`;
+                });
+            }
+            
+            // Initial pair
+            setTimeout(() => {
+                const pairSelect = document.getElementById('pair-select');
+                if (pairSelect) pairSelect.value = 'RHUB/USDC';
+            }, 100);
+        }
+
+        function applyFakeLiveUpdates() {
+            // Occasionally update RHUB rewards
+            setInterval(() => {
+                if (walletConnected && pendingRewards.RHUB > 0) {
+                    pendingRewards.RHUB += (Math.random() * 0.8);
+                    const rewardEl = document.getElementById('rhub-rewards');
+                    if (rewardEl) rewardEl.innerHTML = pendingRewards.RHUB.toFixed(1);
+                }
+            }, 45000);
+            
+            // Gentle TVL growth
+            setInterval(() => {
+                const tvlEl = document.getElementById('tvl');
+                if (tvlEl) {
+                    const current = parseFloat(tvlEl.innerHTML);
+                    tvlEl.innerHTML = (current + 0.003).toFixed(2);
+                }
+            }, 120000);
+        }
+
+        // Keyboard shortcuts (nice touch)
+        function setupKeyboardShortcuts() {
+            document.addEventListener('keydown', function(e) {
+                if (e.metaKey && e.key === "/") {
+                    e.preventDefault();
+                    const input = document.getElementById('order-amount');
+                    if (input) input.focus();
+                }
+            });
+            
+            // Easter egg
+            let konami = [];
+            document.addEventListener('keydown', function(e) {
+                konami.push(e.key);
+                if (konami.length > 6) konami.shift();
+                if (konami.join('') === 'ArrowUpArrowUpArrowDownArrowDownArrowLeftArrowRight') {
+                    showToast('🚀 Secret mode activated. 2x staking rewards for 24h (demo)', 'success');
+                    konami = [];
+                }
+            });
+        }
+
+        // Initialize everything
+        function initializeApp() {
+            initTailwind();
+            updateStats();
+            updatePortfolioUI();
+            updateStakedUI();
+            initPriceChart();
+            applyInitialListeners();
+            applyFakeLiveUpdates();
+            setupKeyboardShortcuts();
+            loadDynamicLaunches();
+            
+            // Default pair price
+            setTimeout(() => {
+                const priceEl = document.getElementById('current-price');
+                if (priceEl) priceEl.innerHTML = '$1.84';
+                
+                document.getElementById('est-price').innerHTML = '$1.84';
+                document.getElementById('receive-amount').innerHTML = '543.48 RHUB';
+            }, 300);
+            
+            // Boot message
+            setTimeout(() => {
+                console.log('%c[RH Crypto] Prototype initialized. All systems nominal.', 'color:#555');
+            }, 800);
+            
+            // Optional: Auto-connect hint for demo feel (commented)
+            // setTimeout(() => { if (!walletConnected) showToast('Tip: Click "Connect Wallet" to enable full interactivity', 'info'); }, 6500);
+        }
+
+        // ========== CREATE LAUNCH (Deploy to Robinhood Blockchain) ==========
+        function showCreateLaunchModal() {
+            const modal = document.getElementById('create-launch-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function hideCreateLaunchModal() {
+            const modal = document.getElementById('create-launch-modal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+
+        function deployTokenToRobinhoodChain() {
+            const name = document.getElementById('launch-name').value.trim() || "New Project";
+            const ticker = document.getElementById('launch-ticker').value.trim() || "$NEW";
+            const desc = document.getElementById('launch-desc').value.trim() || "A new token on Robinhood Blockchain.";
+            const target = parseFloat(document.getElementById('launch-target').value) || 10000000;
+            const price = parseFloat(document.getElementById('launch-price').value) || 1.00;
+            const supply = parseInt(document.getElementById('launch-supply').value) || 100000000;
+            const colorClass = document.getElementById('launch-color').value;
+
+            // Generate realistic on-chain data
+            const contractAddress = "0x" + Array.from({length: 40}, () => Math.floor(Math.random()*16).toString(16)).join('');
+            const txHash = "0x" + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join('');
+            const blockNumber = 124892441 + Math.floor(Math.random() * 10000);
+
+            // Create new launch object
+            const newLaunch = {
+                id: Date.now(),
+                name: name,
+                ticker: ticker,
+                price: price,
+                raised: 0,
+                target: target / 1000000, // store in millions for display
+                progress: 0,
+                desc: desc,
+                color: colorClass,
+                contractAddress: contractAddress,
+                txHash: txHash,
+                blockNumber: blockNumber,
+                isDynamic: true
+            };
+
+            // Save to localStorage (safe)
+            let savedLaunches = JSON.parse(safeGetItem('rHubDynamicLaunches') || '[]');
+            savedLaunches.push(newLaunch);
+            safeSetItem('rHubDynamicLaunches', JSON.stringify(savedLaunches));
+
+            hideCreateLaunchModal();
+
+            // Add the card to the DOM
+            addDynamicLaunchCard(newLaunch);
+
+            // Success feedback
+            showToast(`${name} successfully deployed to Robinhood Blockchain!`, 'success');
+
+            // Update launched count
+            const launchesEl = document.getElementById('launches');
+            if (launchesEl) {
+                const current = parseInt(launchesEl.innerHTML) || 127;
+                launchesEl.innerHTML = current + 1;
+            }
+
+            // Optional: Show on-chain details toast
+            setTimeout(() => {
+                showToast(`Tx confirmed in block #${blockNumber} • Gas used: 1,248,392`, 'info');
+            }, 1800);
+        }
+
+        function addDynamicLaunchCard(launch) {
+            const grid = document.querySelector('#launchpad .grid');
+            if (!grid) return;
+
+            const cardHTML = `
+                <div class="crypto-card glass rounded-3xl p-6 border border-white/10 flex flex-col dynamic-launch" data-id="${launch.id}">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex items-center gap-x-3">
+                            <div class="token-logo bg-gradient-to-br ${launch.color} text-white text-xl">${launch.ticker.replace('$','').slice(0,2)}</div>
+                            <div>
+                                <div class="font-semibold text-xl">${launch.name}</div>
+                                <div class="text-emerald-400 text-xs font-mono">${launch.ticker}</div>
+                            </div>
+                        </div>
+                        <div class="px-3 py-1 text-xs font-medium bg-emerald-500/10 text-emerald-400 rounded-2xl flex items-center">LIVE</div>
+                    </div>
+                    
+                    <p class="text-white/70 text-sm mb-5 line-clamp-2">${launch.desc}</p>
+                    
+                    <div class="mb-4">
+                        <div class="flex justify-between text-xs mb-1.5">
+                            <span class="text-white/60">Raised</span>
+                            <span class="font-mono font-medium">$${launch.raised}M / $${launch.target}M</span>
+                        </div>
+                        <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                            <div class="launch-progress" style="width: ${launch.progress}%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-end mt-auto">
+                        <div>
+                            <div class="text-xs text-white/50">Contract</div>
+                            <div class="font-mono text-[10px] text-white/60">${launch.contractAddress.slice(0,10)}...</div>
+                        </div>
+                        <button onclick="investInDynamicLaunch(${launch.id})" 
+                                class="px-6 py-2.5 text-sm font-semibold bg-white text-black rounded-3xl active:scale-[0.985] transition-all hover:bg-white/90">
+                            Invest Now
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            grid.insertAdjacentHTML('beforeend', cardHTML);
+        }
+
+        function investInDynamicLaunch(launchId) {
+            // Find the launch from localStorage (safe)
+            let savedLaunches = JSON.parse(safeGetItem('rHubDynamicLaunches') || '[]');
+            const launch = savedLaunches.find(l => l.id === launchId);
+            if (!launch) return;
+
+            // Reuse the existing invest modal but with dynamic data
+            document.getElementById('modal-project-name').innerHTML = launch.name;
+            document.getElementById('modal-project-ticker').innerHTML = launch.ticker;
+            document.getElementById('invest-amount').value = '2500';
+            
+            // Temporarily override confirmInvestment for this dynamic launch
+            const originalConfirm = window.confirmInvestment;
+            window.confirmInvestment = function() {
+                const amount = parseFloat(document.getElementById('invest-amount').value);
+                if (!amount || amount > balances.USDC) {
+                    showToast('Invalid amount or insufficient balance', 'error');
+                    return;
+                }
+                
+                balances.USDC -= amount;
+                const tokensReceived = amount / launch.price;
+                
+                // Update the specific launch's raised amount (demo)
+                launch.raised = (launch.raised || 0) + (amount / 1000000);
+                launch.progress = Math.min(100, Math.round((launch.raised / launch.target) * 100));
+                
+                // Save back (safe)
+                let all = JSON.parse(safeGetItem('rHubDynamicLaunches') || '[]');
+                const idx = all.findIndex(l => l.id === launchId);
+                if (idx !== -1) all[idx] = launch;
+                safeSetItem('rHubDynamicLaunches', JSON.stringify(all));
+                
+                hideInvestModal();
+                showToast(`Invested $${amount.toLocaleString()} in ${launch.name}!`, 'success');
+                updatePortfolioUI();
+                
+                // Refresh the specific card's progress (simple reload for demo)
+                setTimeout(() => location.reload(), 1200);
+            };
+            
+            document.getElementById('invest-modal').classList.remove('hidden');
+            document.getElementById('invest-modal').classList.add('flex');
+            
+            const amountInput = document.getElementById('invest-amount');
+            amountInput.oninput = function() {
+                const amt = parseFloat(this.value) || 0;
+                const tokens = (amt / launch.price).toFixed(2);
+                document.getElementById('modal-tokens-receive').innerHTML = `${tokens} ${launch.ticker}`;
+            };
+            
+            // Restore original after close (simple approach)
+            setTimeout(() => {
+                const modal = document.getElementById('invest-modal');
+                const observer = new MutationObserver(() => {
+                    if (modal.classList.contains('hidden')) {
+                        window.confirmInvestment = originalConfirm;
+                        observer.disconnect();
+                    }
+                });
+                observer.observe(modal, { attributes: true, attributeFilter: ['class'] });
+            }, 100);
+        }
+
+        function loadDynamicLaunches() {
+            let saved = JSON.parse(safeGetItem('rHubDynamicLaunches') || '[]');
+
+            // Always include the real launched token (user provided contract)
+            const realTokenAddress = "0xf457bbEBA9B57fBe67eAd5Af30c89787A439b68f";
+            const hasRealToken = saved.some(l => l.contractAddress === realTokenAddress);
+
+            if (!hasRealToken) {
+                const realLaunch = {
+                    id: 999999,
+                    name: "RHub Genesis",
+                    ticker: "$RHUB",
+                    price: 1.50,
+                    raised: 2.4,
+                    target: 25,
+                    progress: 9.6,
+                    desc: "The official genesis token deployed on Robinhood Blockchain.",
+                    color: "from-emerald-500 to-teal-600",
+                    contractAddress: realTokenAddress,
+                    txHash: "0x" + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join(''),
+                    blockNumber: 124892441,
+                    isDynamic: true
+                };
+                saved.unshift(realLaunch); // Put it first
+                safeSetItem('rHubDynamicLaunches', JSON.stringify(saved));
+            }
+
+            saved.forEach(launch => {
+                addDynamicLaunchCard(launch);
+            });
+        }
+
+        // Boot the app
+        window.onload = initializeApp;
+        
+        // Expose a couple helpers for console tinkering (dev only)
+        window.RH = {
+            connect: () => document.getElementById('wallet-btn').click(),
+            stake: (t) => stakeTokens(t || 'RHUB'),
+            invest: (i) => investInLaunch(i || 0)
+        };
+    </script>
+</body>
+</html>
